@@ -1,93 +1,196 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Washim Masud | Portfolio</title>
-  <style>
-    body { margin: 0; font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-    header { background: #4A90E2; color: white; padding: 60px 20px; text-align: center; }
-    header h1 { margin: 0; font-size: 2.5em; }
-    header p { margin: 10px 0 0; font-size: 1.2em; }
-    nav { background: #333; }
-    nav ul { list-style: none; margin: 0; padding: 0; display: flex; justify-content: center; }
-    nav li { margin: 0 15px; }
-    nav a { color: white; text-decoration: none; padding: 15px 0; display: inline-block; }
-    nav a:hover { background: #555; }
-    section { padding: 60px 20px; max-width: 800px; margin: auto; }
-    .about, .portfolio, .contact { margin-bottom: 40px; }
-    .project { margin-bottom: 30px; }
-    footer { background: #f4f4f4; padding: 20px; text-align: center; }
-    .btn { display: inline-block; padding: 10px 20px; background: #4A90E2; color: white; text-decoration: none; border-radius: 4px; }
-    .btn:hover { background: #357ABD; }
-  </style>
+<meta charset="UTF-8">
+<title>MWM Entp. - Electronics Store</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #0d0d0d;
+        color: #fff;
+    }
+
+    header {
+        background: #111;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #333;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 24px;
+        letter-spacing: 1px;
+    }
+
+    .cart-btn {
+        background: #222;
+        padding: 10px 15px;
+        border-radius: 6px;
+        cursor: pointer;
+        border: 1px solid #444;
+    }
+
+    .container {
+        padding: 20px;
+    }
+
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 20px;
+    }
+
+    .product {
+        background: #1a1a1a;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #333;
+        text-align: center;
+    }
+
+    .product img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+
+    .product h3 {
+        margin: 10px 0;
+        font-size: 18px;
+    }
+
+    .product button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 8px;
+        background: #0066ff;
+        border: none;
+        color: white;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    /* CART DRAWER */
+    #cart {
+        position: fixed;
+        right: -400px;
+        top: 0;
+        width: 350px;
+        height: 100%;
+        background: #111;
+        transition: 0.3s;
+        padding: 20px;
+        border-left: 1px solid #333;
+        overflow-y: auto;
+    }
+
+    #cart.open {
+        right: 0;
+    }
+
+    .cart-item {
+        margin: 10px 0;
+        padding: 10px;
+        border-bottom: 1px solid #333;
+    }
+
+    .close-cart {
+        background: #222;
+        padding: 8px;
+        margin-bottom: 10px;
+        display: inline-block;
+        border: 1px solid #444;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+</style>
 </head>
+
 <body>
+<header>
+    <h1>MWM Entp. Electronics</h1>
+    <div class="cart-btn" onclick="toggleCart()">🛒 Cart (<span id="cartCount">0</span>)</div>
+</header>
 
-  <header id="home">
-    <h1>Washim Masud</h1>
-    <p>Software Engineer & Designer</p>
-  </header>
+<div class="container">
+    <div class="product-grid" id="productList"></div>
+</div>
 
-  <nav>
-    <ul>
-      <li><a href="#about">About</a></li>
-      <li><a href="#portfolio">Portfolio</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-  </nav>
+<!-- CART DRAWER -->
+<div id="cart">
+    <div class="close-cart" onclick="toggleCart()">Close ✖</div>
+    <h2>Your Cart</h2>
+    <div id="cartItems"></div>
+    <h3>Total: $<span id="cartTotal">0</span></h3>
+</div>
 
-  <section class="about" id="about">
-    <h2>About Me</h2>
-    <p>Hi, I'm Washim Masud — a passionate software engineer based in Doha. I specialize in full-stack development, UI/UX design, and building web applications that are both functional and beautiful.</p>
-    <p>I have experience in React, Node.js, and modern design tools. I believe in writing clean, maintainable code and creating products that provide real value.</p>
-  </section>
+<script>
+const products = [
+    {name:"Samsung Galaxy S23 Ultra", price:999, img:"https://via.placeholder.com/300x180?text=S23+Ultra"},
+    {name:"iPhone 15 Pro", price:1099, img:"https://via.placeholder.com/300x180?text=iPhone+15+Pro"},
+    {name:"Google Pixel 8", price:699, img:"https://via.placeholder.com/300x180?text=Pixel+8"},
+    {name:"MacBook Air M2", price:999, img:"https://via.placeholder.com/300x180?text=MacBook+Air+M2"},
+    {name:"Dell XPS 15", price:1299, img:"https://via.placeholder.com/300x180?text=Dell+XPS+15"},
+    {name:"Lenovo IdeaPad Gaming 3", price:749, img:"https://via.placeholder.com/300x180?text=IdeaPad+Gaming"},
+    {name:"Sony WH-1000XM5", price:349, img:"https://via.placeholder.com/300x180?text=Sony+XM5"},
+    {name:"AirPods Pro 2", price:249, img:"https://via.placeholder.com/300x180?text=AirPods+Pro+2"},
+    {name:"JBL Flip 6", price:99, img:"https://via.placeholder.com/300x180?text=JBL+Flip+6"},
+    {name:"Apple Watch Series 9", price:399, img:"https://via.placeholder.com/300x180?text=Watch+9"},
+    {name:"Galaxy Watch 6", price:329, img:"https://via.placeholder.com/300x180?text=Watch+6"},
+    {name:"Logitech C920 Webcam", price:69, img:"https://via.placeholder.com/300x180?text=C920+Webcam"},
+    {name:"Anker 60W USB-C Charger", price:39, img:"https://via.placeholder.com/300x180?text=Anker+Charger"},
+    {name:"Samsung T7 SSD 1TB", price:129, img:"https://via.placeholder.com/300x180?text=T7+SSD"},
+    {name:"Razer Basilisk X Mouse", price:59, img:"https://via.placeholder.com/300x180?text=Razer+Mouse"},
+];
 
-  <section class="portfolio" id="portfolio">
-    <h2>My Projects</h2>
-    <div class="project">
-      <h3>Portfolio Builder</h3>
-      <p>A web application that helps users build and host their personal portfolio sites. Built with React, Node.js, and MongoDB.</p>
-    </div>
-    <div class="project">
-      <h3>Task Manager App</h3>
-      <p>A task-management web app to help users organize their daily workflow. Features include user authentication, task categorization, and deadlines.</p>
-    </div>
-    <div class="project">
-      <h3>Blog Platform</h3>
-      <p>A simple blogging platform with a clean UI, built using Express.js and a templating engine. Allows users to write, edit, and publish posts.</p>
-    </div>
-  </section>
+let cart = [];
 
-  <section class="contact" id="contact">
-    <h2>Contact Me</h2>
-    <p>If you’d like to work with me or just say hello, feel free to reach out:</p>
-    <p>Email: <a href="mailto:washim.masud@example.com">washim.masud@example.com</a></p>
-    <p>
-      <a class="btn" href="mailto:washim.masud@example.com">Send Email</a>
-    </p>
-  </section>
-
-  <footer>
-    <p>&copy; 2025 Washim Masud. All rights reserved.</p>
-  </footer>
-
-  <script>
-    // Smooth scroll for in-page nav links
-    document.querySelectorAll('nav a').forEach(link => {
-      link.addEventListener('click', function(e) {
-        e.preventDefault();
-        const targetId = this.getAttribute('href').substring(1);
-        const target = document.getElementById(targetId);
-        if (target) {
-          window.scrollTo({
-            top: target.offsetTop - 50,
-            behavior: 'smooth'
-          });
-        }
-      });
+function displayProducts(){
+    const list = document.getElementById("productList");
+    products.forEach((p, i)=> {
+        list.innerHTML += `
+            <div class="product">
+                <img src="${p.img}">
+                <h3>${p.name}</h3>
+                <p>$${p.price}</p>
+                <button onclick="addToCart(${i})">Add to Cart</button>
+            </div>
+        `;
     });
-  </script>
+}
 
+function addToCart(i){
+    cart.push(products[i]);
+    updateCart();
+}
+
+function updateCart(){
+    document.getElementById("cartCount").innerText = cart.length;
+
+    let html = "";
+    let total = 0;
+
+    cart.forEach(c => {
+        html += `<div class="cart-item">${c.name} — $${c.price}</div>`;
+        total += c.price;
+    });
+
+    document.getElementById("cartItems").innerHTML = html;
+    document.getElementById("cartTotal").innerText = total;
+}
+
+function toggleCart(){
+    document.getElementById("cart").classList.toggle("open");
+}
+
+displayProducts();
+</script>
 </body>
 </html>
